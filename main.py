@@ -15,8 +15,8 @@ def train_ml():
     txt = f.read()
     data = json.loads(txt)
     ai = Ai(data)
-    plot(ai.data)
-    # print(ai.data.head())
+    # plot(ai.data)
+    # print(ai.data)
     # reqData = request.get_json()
     return {}
   

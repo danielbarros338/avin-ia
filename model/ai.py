@@ -6,13 +6,15 @@ class Ai():
     self.data = self.__formatData__(data)
 
   def __formatData__(self, data):
-    dfData = data['timeSeriesDaily']['Time Series (Daily)']
-    dfData = pd.DataFrame(data=dfData)
-    dfData = dfData.T
+    dfData = []
 
-    dfData[dfData.columns] = dfData[dfData.columns].apply(pd.to_numeric, errors='coerce')
-    dfData[dfData.columns] = tf.keras.utils.normalize(dfData[dfData.columns].values, axis=0)
+    for df in data['timeSeriesDailyArr']:
+      dfDataTemp = pd.DataFrame(data=df['Time Series (Daily)'])
+      dfDataTemp = dfDataTemp.T
 
-    print(dfData.head())
+      dfDataTemp[dfDataTemp.columns] = dfDataTemp[dfDataTemp.columns].apply(pd.to_numeric, errors='coerce')
+      dfDataTemp[dfDataTemp.columns] = tf.keras.utils.normalize(dfDataTemp[dfDataTemp.columns].values, axis=0)
+
+      dfData.append(dfDataTemp)
 
     return dfData
