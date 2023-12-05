@@ -14,9 +14,7 @@ def train_ml():
   with open("data/fake.json", 'r') as f:
     txt = f.read()
     data = json.loads(txt)
-    ai = Ai(data)
-    ai.training()
-    ai.plot()    
+    ai = Ai(data)  
     # print(train_dataset)
     # plot(train_dataset)
     # print(ai.data)

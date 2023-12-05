@@ -2,6 +2,7 @@ import pandas as pd
 import tensorflow as tf
 import matplotlib.pyplot as plt
 import numpy as np
+import os
 
 from tensorflow import keras
 # from tensorflow.keras import layers
@@ -9,7 +10,10 @@ from tensorflow import keras
 class Ai():
   def __init__(self, data):
     self.data = self.__formatData__(data)
-    self.model = self.build_model()
+    self.model, need_training = self.build_model()
+    
+    if need_training:
+      self.training()
 
   def __formatData__(self, data):
     dfData = []
@@ -65,6 +69,9 @@ class Ai():
       verbose=True
     )
 
+    actual_dir = os.path.dirname(os.path.realpath(__file__))
+    self.model.save(actual_dir + '\\ia-models\\future-stock.keras')
+
     predictions_normalized = self.model.predict(X_test)
 
     # Calcular MAE (Erro Absoluto Médio)
@@ -76,25 +83,32 @@ class Ai():
     # Calcular RMSE (Raiz Quadrada do Erro Quadrático Médio)
     rmse_tf = tf.sqrt(mse_tf)
 
+    print(f"Prediction: {predictions_normalized}")
     print(f"MAE (TensorFlow): {mae_tf}")
     print(f"MSE (TensorFlow): {mse_tf}")
     print(f"RMSE (TensorFlow): {rmse_tf}")
 
   def build_model(self):
-    model = keras.Sequential([
-      keras.layers.Dense(65, activation='relu', input_shape=[1]),
-      keras.layers.Dense(37, activation='relu'),
-      keras.layers.Dense(1, activation='linear')
-    ])
+    actual_dir = os.path.dirname(os.path.realpath(__file__))
+    model_exist = os.path.isfile(actual_dir +"\\ia-models\\future-stock.keras")
+    
+    if model_exist:
+      return model_exist, False
+    else:
+      model = keras.Sequential([
+        keras.layers.Dense(65, activation='relu', input_shape=[1]),
+        keras.layers.Dense(37, activation='relu'),
+        keras.layers.Dense(1, activation='linear')
+      ])
 
-    optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
+      optimizer = tf.keras.optimizers.Adam(learning_rate=0.001)
 
-    model.compile(loss='mae', optimizer=optimizer, metrics=['mae', 'mse'])
+      model.compile(loss='mae', optimizer=optimizer, metrics=['mae', 'mse'])
 
-    return model
+      return model, True
   
-  def predict(self):
-    self.training()
+  def predict(self, x):
+    return self.model.predict(x)
 
   def plot(self):
     # hist = pd.DataFrame(self.history.history)
